@@ -1,0 +1,85 @@
+import numpy as np
+import random
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+# Grid size (keep small for performance)
+N = 18
+
+# Initialize 3D lattice with +1 / -1
+grid = np.random.choice([-1, 1], size=(N, N, N))
+
+# 8 diagonal neighbors (cube corners)
+neighbors = [
+    (dx, dy, dz)
+    for dx in [-1, 1]
+    for dy in [-1, 1]
+    for dz in [-1, 1]
+]
+
+def neighbor_sum(x, y, z):
+    s = 0
+    for dx, dy, dz in neighbors:
+        nx = (x + dx) % N
+        ny = (y + dy) % N
+        nz = (z + dz) % N
+        s += grid[nx, ny, nz]
+    return s
+
+# Simulation parameters
+steps = 80000
+
+plt.ion()
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+for step in range(steps):
+
+    x = random.randint(0, N - 1)
+    y = random.randint(0, N - 1)
+    z = random.randint(0, N - 1)
+
+    current = neighbor_sum(x, y, z)
+    energy_before = current * current
+
+    # flip trial
+    grid[x, y, z] *= -1
+
+    new = neighbor_sum(x, y, z)
+    energy_after = new * new
+
+    # accept only if better
+    if energy_after > energy_before:
+        grid[x, y, z] *= -1
+
+    # visualize occasionally
+    if step % 3000 == 0:
+        ax.clear()
+
+        xs_pos, ys_pos, zs_pos = [], [], []
+        xs_neg, ys_neg, zs_neg = [], [], []
+
+        for i in range(N):
+            for j in range(N):
+                for k in range(N):
+                    if grid[i, j, k] == 1:
+                        xs_pos.append(i)
+                        ys_pos.append(j)
+                        zs_pos.append(k)
+                    else:
+                        xs_neg.append(i)
+                        ys_neg.append(j)
+                        zs_neg.append(k)
+
+        ax.scatter(xs_pos, ys_pos, zs_pos, c='red', s=10, label='+1')
+        ax.scatter(xs_neg, ys_neg, zs_neg, c='blue', s=10, label='-1')
+
+        ax.set_title(f"3D Entanglement Model — Step {step}")
+        ax.set_xlim(0, N)
+        ax.set_ylim(0, N)
+        ax.set_zlim(0, N)
+
+        plt.pause(0.1)
+
+plt.ioff()
+plt.show()

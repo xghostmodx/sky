@@ -1,0 +1,5 @@
+#!/bin/bash
+grub-mkconfig 
+update-grub
+update-grub2
+reboot

@@ -1,0 +1,10 @@
+#!/bin/bash
+echo " wtf u making?"
+read NAME
+touch $NAME
+echo " shitn n tabin"
+sudo chmod u+x -vf "$NAME"
+sudo sh ./ $NAME
+sudo crontab  "$NAME"
+echo "Its ready bitch!!"
+

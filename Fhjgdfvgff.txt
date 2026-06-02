@@ -1,0 +1,32 @@
+from collections import deque
+import numpy as np
+
+trajectory = deque(maxlen=200)
+
+def is_orbital(traj, radius=3.0):
+    if len(traj) < 50:
+        return False
+
+    pts = np.array(traj)
+
+    center = np.mean(pts, axis=0)
+    distances = np.linalg.norm(pts - center, axis=1)
+
+    # condition 1: bounded
+    if np.max(distances) > radius:
+        return False
+
+    # condition 2: recurrence (rough)
+    unique_positions = len(set(map(tuple, pts[::5])))
+    if unique_positions < len(pts[::5]) * 0.4:
+        return True
+
+    return False
+
+# inside simulation loop:
+
+trajectory.append(particle_position)
+
+if len(trajectory) == trajectory.maxlen:
+    if is_orbital(trajectory):
+        print("⚛️ Orbital-like structure detected")

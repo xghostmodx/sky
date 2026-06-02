@@ -1,0 +1,9 @@
+#!/bin/bash 
+sudo -s << EOF
+grub-mkconfig 
+update-grub
+update-grub2
+reboot
+EOF
+
+

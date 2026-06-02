@@ -1,0 +1,54 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import random
+
+# Grid size
+N = 50
+
+# Initialize grid with +1 or -1 randomly
+grid = np.random.choice([-1, 1], size=(N, N))
+
+# Periodic boundary conditions (wrap around)
+def get_neighbors_sum(x, y):
+    total = 0
+    for dx in [-1, 0, 1]:
+        for dy in [-1, 0, 1]:
+            if dx == 0 and dy == 0:
+                continue
+            nx = (x + dx) % N
+            ny = (y + dy) % N
+            total += grid[nx, ny]
+    return total
+
+# Simulation steps
+steps = 200000
+
+plt.ion()
+fig, ax = plt.subplots()
+
+for step in range(steps):
+    x = random.randint(0, N-1)
+    y = random.randint(0, N-1)
+
+    current_sum = get_neighbors_sum(x, y)
+    E_before = current_sum ** 2
+
+    # Try flipping
+    grid[x, y] *= -1
+
+    new_sum = get_neighbors_sum(x, y)
+    E_after = new_sum ** 2
+
+    # Accept only if energy improves
+    if E_after > E_before:
+        grid[x, y] *= -1  # revert
+
+    # Display every few steps
+    if step % 2000 == 0:
+        ax.clear()
+        ax.imshow(grid, cmap='bwr')
+        ax.set_title(f"Step {step}")
+        plt.pause(0.01)
+
+plt.ioff()
+plt.show()

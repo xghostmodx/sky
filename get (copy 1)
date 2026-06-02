@@ -1,0 +1,10 @@
+#!/bin/bash 
+echo "wtf u installing ?"
+read NAME
+sudo apt-get install unattended-upgrades $NAME
+sudo apt-get -f install $NAME
+sudo apt-get download $NAME
+sudo apt-cache  build-dep $NAME
+sudo apt-get install $NAME --install-recommends --fix-missing --allow-change-held-packages --unattended-upgrades=true --assume-yes  
+sudo apt-get update  -y
+sudo apt-get upgrade -y
